@@ -7,7 +7,7 @@ the fly.
 
 This library was inspired by [dg/bypass-finals](https://github.com/dg/bypass-finals) library.
 I wanted to have same functionally but with different approach. I hope that this different
-approach will not have the same problems as dg/bypass-finals have with infection for example.
+approach will not have the same problems as dg/bypass-finals have with infection.
 
 ### Usage
 
@@ -25,7 +25,7 @@ Only thing what you need to do in your test is this:
 <?php
 
 use PHPUnit\Framework\TestCase;
-use Robier\Tests\IgnoreFinals;
+use Robier\Tests\IgnoreFinal;
 
 class FooBarTest extends TestCase
 {

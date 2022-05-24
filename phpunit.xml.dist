@@ -6,6 +6,7 @@
         colors="true"
         bootstrap="./vendor/autoload.php"
         cacheResultFile="./.cache/.phpunit.result.cache"
+        processIsolation="true"
 >
   <coverage>
     <include>

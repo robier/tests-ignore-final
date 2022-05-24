@@ -41,6 +41,11 @@ final class Autoloader
         }
 
         $path = $this->classLoader->get($class);
+
+        if (null === $path) {
+            throw Exception::classNotFound($class);
+        }
+
         $fileContents = file_get_contents($path);
         $hash = sha1_file($path);
 

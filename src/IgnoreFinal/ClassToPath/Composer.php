@@ -19,10 +19,10 @@ final class Composer implements Contract
 
     public function __construct()
     {
-        $path = dirname(__DIR__, 3) . '/autoload.php';
+        $path = dirname(__DIR__, 4) . '/autoload.php';
 
         if (!is_file($path)) {
-            Exception::fileNotFound($path);
+            throw Exception::fileNotFound($path);
         }
 
         $this->loader = require $path;
