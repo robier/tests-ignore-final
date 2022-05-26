@@ -12,9 +12,12 @@ final class IgnoreFinal
 {
     private $classes;
 
+    private $globally;
+
     public function __construct(Autoloader $autoloader)
     {
         $this->classes = $autoloader->classes();
+        $this->globally = $autoloader->isGloballyEnabled();
 
         // we need this to be loaded before all other autoloads as we want to change
         // php code before it's loaded
@@ -33,8 +36,24 @@ final class IgnoreFinal
         return new static(
             new Autoloader(
                 new Composer(),
+                false,
+                false,
                 $class,
                 ...$classes
+            )
+        );
+    }
+
+    /**
+     * To ignore tests globally
+     */
+    public static function enableGlobally(bool $inplace = false): self
+    {
+        return new static(
+            new Autoloader(
+                new Composer(),
+                true,
+                $inplace,
             )
         );
     }
@@ -47,6 +66,8 @@ final class IgnoreFinal
         return new static(
             new Autoloader(
                 new Map($map),
+                false,
+                false,
                 $class,
                 ...$classes
             )
@@ -55,6 +76,6 @@ final class IgnoreFinal
 
     public function isAppliedOn(string $class): bool
     {
-        return isset($this->classes[$class]);
+        return $this->globally || isset($this->classes[$class]);
     }
 }

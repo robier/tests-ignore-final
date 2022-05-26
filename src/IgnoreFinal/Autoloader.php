@@ -15,14 +15,27 @@ final class Autoloader
      * @var Contract
      */
     private $classLoader;
+
     /**
      * @var string[]
      */
     private $classes;
 
-    public function __construct(Contract $classLoader, string ...$classes)
+    /**
+     * @var bool
+     */
+    private $enableGlobally;
+
+    /**
+     * @var bool
+     */
+    private $inplace;
+
+    public function __construct(Contract $classLoader, bool $enableGlobal, bool $inplace, string ...$classes)
     {
         $this->classLoader = $classLoader;
+        $this->enableGlobally = $enableGlobal;
+        $this->inplace = $inplace;
         $this->classes = array_combine($classes, $classes);
     }
 
@@ -31,31 +44,38 @@ final class Autoloader
         return $this->classes;
     }
 
+    public function isGloballyEnabled(): bool
+    {
+        return $this->enableGlobally;
+    }
+
     /**
      * @return void
      */
     public function __invoke(string $class)
     {
-        if (!isset($this->classes[$class])) {
+        if (!$this->enableGlobally && !isset($this->classes[$class])) {
             return;
         }
 
         $path = $this->classLoader->get($class);
 
         if (null === $path) {
+            if ($this->enableGlobally) {
+                return;
+            }
             throw Exception::classNotFound($class);
         }
 
         $fileContents = file_get_contents($path);
-        $hash = sha1_file($path);
 
-        $newName = $hash . '.php';
-
+        $final = false;
         $newCode = '';
         foreach (token_get_all($fileContents) as $item) {
             if (is_array($item)) {
                 if ($item[0] === T_FINAL) {
                     $item[1] = '';
+                    $final = true;
                 }
 
                 $item = $item[1];
@@ -63,9 +83,21 @@ final class Autoloader
             $newCode .= $item;
         }
 
+        if (!$final) {
+            return;
+        }
+
+        $hash = sha1_file($path);
+        $newName = $this->inplace ? $path : dirname(realpath($path)) . '/' . $hash . '.php';
+
         file_put_contents($newName, $newCode);
 
         require_once $newName;
-        unlink($newName);
+
+        if ($this->inplace) {
+            file_put_contents($path, $fileContents);
+        } else {
+            unlink($newName);
+        }
     }
 }
