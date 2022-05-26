@@ -22,6 +22,8 @@ final class AutoloaderTest extends TestCase
                     FooBar::class => dirname(__DIR__) . '/FooBar.php',
                 ]
             ),
+            false,
+            false,
             FooBar::class
         );
 
@@ -40,7 +42,9 @@ final class AutoloaderTest extends TestCase
                 [
                     FooBar::class => dirname(__DIR__) . '/FooBar.php',
                 ]
-            )
+            ),
+            false,
+            false
         );
 
         $autoloader(FooBar::class);
@@ -59,6 +63,8 @@ final class AutoloaderTest extends TestCase
                     FooBar::class => dirname(__DIR__) . '/FooBar.php',
                 ]
             ),
+            false,
+            false,
             FooBar::class
         );
 
