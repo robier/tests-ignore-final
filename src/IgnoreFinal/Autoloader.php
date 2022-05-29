@@ -51,6 +51,7 @@ final class Autoloader
 
     /**
      * @return void
+     * @throws Exception
      */
     public function __invoke(string $class)
     {
@@ -65,6 +66,18 @@ final class Autoloader
                 return;
             }
             throw Exception::classNotFound($class);
+        }
+
+        $this->loadFile($path);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function loadFile(string $path): void
+    {
+        if (!file_exists($path)) {
+            throw Exception::fileNotFound($path);
         }
 
         $fileContents = file_get_contents($path);
