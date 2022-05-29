@@ -12,10 +12,19 @@ final class IgnoreFinal
 {
     private $classes;
 
+    /**
+     * @var bool
+     */
     private $globally;
+
+    /**
+     * @var Autoloader
+     */
+    private $autoloader;
 
     public function __construct(Autoloader $autoloader)
     {
+        $this->autoloader = $autoloader;
         $this->classes = $autoloader->classes();
         $this->globally = $autoloader->isGloballyEnabled();
 
@@ -79,8 +88,20 @@ final class IgnoreFinal
         return $this->globally || isset($this->classes[$class]);
     }
 
-    public static function preloadClass(string $class): void
+    /**
+     * @throws IgnoreFinal\Exception
+     */
+    public function preloadClass(string $class): void
     {
-        class_exists($class);
+        $autoloader = $this->autoloader;
+        $autoloader($class);
+    }
+
+    /**
+     * @throws IgnoreFinal\Exception
+     */
+    public function preloadFile(string $path): void
+    {
+        $this->autoloader->loadFile($path);
     }
 }

@@ -15,4 +15,9 @@ final class Exception extends \Exception
     {
         return new static(sprintf('Class %s path not find in autoloader', $class));
     }
+
+    static function pathNotFound(string $path): self
+    {
+        return new static(sprintf('Path %s does not exist', $path));
+    }
 }
