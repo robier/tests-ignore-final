@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Robier\Tests;
 
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use RegexIterator;
 use Robier\Tests\IgnoreFinal\Autoloader;
 use Robier\Tests\IgnoreFinal\ClassToPath\Composer;
 use Robier\Tests\IgnoreFinal\ClassToPath\Map;
@@ -103,5 +106,19 @@ final class IgnoreFinal
     public function preloadFile(string $path): void
     {
         $this->autoloader->loadFile($path);
+    }
+
+    public function preloadFiles(string $rootPath, string $fileRegex): void
+    {
+        $fileIterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($rootPath));
+        $filteredFileIterator = new RegexIterator($fileIterator, $fileRegex);
+
+        foreach ($filteredFileIterator as $file) {
+            if ($file->isDir()){
+                continue;
+            }
+            $this->preloadFile($file->getPathname());
+        }
+
     }
 }
