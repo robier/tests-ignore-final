@@ -78,4 +78,9 @@ final class IgnoreFinal
     {
         return $this->globally || isset($this->classes[$class]);
     }
+
+    public static function preloadClass(string $class): void
+    {
+        class_exists($class);
+    }
 }
