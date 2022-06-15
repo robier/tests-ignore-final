@@ -94,18 +94,25 @@ final class IgnoreFinal
     /**
      * @throws IgnoreFinal\Exception
      */
-    public function preloadClass(string $class): void
+    public function preloadClass(string $class, string ...$classes): void
     {
+        array_unshift($classes, $class);
+
         $autoloader = $this->autoloader;
-        $autoloader($class);
+        foreach ($classes as $classToPreload) {
+            $autoloader($classToPreload);
+        }
     }
 
     /**
      * @throws IgnoreFinal\Exception
      */
-    public function preloadFile(string $path): void
+    public function preloadFile(string $path, string ...$paths): void
     {
-        $this->autoloader->loadFile($path);
+        array_unshift($paths, $path);
+        foreach ($paths as $pathToPreload) {
+            $this->autoloader->loadFile($pathToPreload);
+        }
     }
 
     public function preloadFiles(string $rootPath, string $fileRegex): void
